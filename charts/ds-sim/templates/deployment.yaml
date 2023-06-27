@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ds-sim.fullname" . }}
+  labels:
+    {{- include "ds-sim.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "ds-sim.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ds-sim.selectorLabels" . | nindent 8 }}
+    spec:
+      hostname: {{ .Values.hostName }}
+      containers:
+        - name: file-browser
+          image: hurlenko/filebrowser
+          volumeMounts:
+            - name: shared-data
+              mountPath: /data
+          ports:
+            - containerPort: 8080
+              name: http
+        - name: {{ .Chart.Name }}
+          image: local/ds-sim:0.0.14
+          imagePullPolicy: Never
+          volumeMounts:
+            - name: shared-data
+              mountPath: /root/shared
+          livenessProbe:
+            tcpSocket:
+              port: 5900
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+          ### checks if http-vnc connection is working
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: shared-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    application: headless-vnc
+  name: headless-vnc
+spec:
+  externalName: headless-vnc
+  ports:
+  - name: http-port-tcp
+    protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 32001
+  - name: vnc-port-tcp
+    protocol: TCP
+    port: 5000
+    targetPort: 5000
+    nodePort: 32002
+  - name: http-file-server-port
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+    nodePort: 32003
+  - name: opc-sim-tcp
+    protocol: TCP
+    port: 53530
+    targetPort: 53530
+    nodePort: 32004
+  selector:
+    {{- include "ds-sim.selectorLabels" . | nindent 4 }}
+  type: NodePort
