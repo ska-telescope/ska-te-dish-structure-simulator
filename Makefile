@@ -34,3 +34,8 @@ k8s-wait:
 k8s-do-test-runner:
 	helm test $(HELM_RELEASE)
 
+
+pre-fligh-check: helm-lint
+
+
+

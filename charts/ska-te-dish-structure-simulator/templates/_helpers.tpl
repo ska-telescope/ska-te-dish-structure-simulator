@@ -89,7 +89,7 @@ NodePort
 set the ds-sim image
 */}}
 {{- define "ds-sim.image" -}}
-{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
+'{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}'
 {{- end }}
 {{/*
 
