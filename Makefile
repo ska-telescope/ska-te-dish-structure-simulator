@@ -35,6 +35,16 @@ k8s-do-test-runner:
 	helm test $(HELM_RELEASE)
 
 
+k8s-do-template-chart: k8s-clean k8s-dep-update
+	mkdir -p build/manifests
+	@echo "template-chart: install $(K8S_UMBRELLA_CHART_PATH) release: $(HELM_RELEASE) in Namespace: $(KUBE_NAMESPACE) with params: $(K8S_CHART_PARAMS)"
+	kubectl create ns $(KUBE_NAMESPACE) --dry-run=client -o yaml | tee build/manifests/manifests.yaml; \
+	helm template $(HELM_RELEASE) \
+	$(K8S_CHART_PARAMS) \
+	--debug \
+	 $(K8S_UMBRELLA_CHART_PATH) --namespace $(KUBE_NAMESPACE) | tee -a build/manifests/manifests.yaml
+
+
 pre-fligh-check: helm-lint
 
 
