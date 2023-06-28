@@ -2,7 +2,9 @@ FROM fredblgr/ubuntu-novnc:20.04
 
 USER root
 
-RUN apt-get update && apt-get install -y at-spi2-core vim libfuse2
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    at-spi2-core vim libfuse2  \
+    && apt-get clean && rm -rf /var/cache/apt/lists
 
 ADD config.tar /root
 
