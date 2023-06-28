@@ -30,7 +30,7 @@ spec:
             - containerPort: 8080
               name: http
         - name: {{ .Chart.Name }}
-          image: local/ds-sim:0.0.14
+          image: {{ include "ds-sim.image" . }}
           imagePullPolicy: Never
           volumeMounts:
             - name: shared-data
@@ -85,4 +85,4 @@ spec:
     nodePort: 32004
   selector:
     {{- include "ds-sim.selectorLabels" . | nindent 4 }}
-  type: NodePort
+  type: {{ include "ds-sim.serviceType" . }}

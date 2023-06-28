@@ -1,15 +1,22 @@
 # set env vars for local dev environment
+ENV_TYPE ?= ci # the environment in which the k8s installation takes place
+# we use this image tag to know which image to use in the chart
+IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
 ifeq ($(CI_JOB_ID),)
   CAR_OCI_REGISTRY_HOST = docker.io
   VERSION = latest
   HELM_RELEASE = dev
+  ENV_TYPE = dev
+  IMAGE_TAG = $(VERSION)
   #HELM_BUILD_PUSH_SKIP=yes
 endif
 
-K8S_CHART_PARAMS = --atomic --timeout 300s
 
-temp:
-	@echo "K8S_CHART_PARAMS=$(K8S_CHART_PARAMS)"
+K8S_CHART_PARAMS = --atomic --timeout 300s \
+  --set env.type=${ENV_TYPE} \
+  --set image.repository=$(CAR_OCI_REGISTRY_HOST) \
+  --set image.name=$(OCI_IMAGE) \
+  --set image.tag=$(IMAGE_TAG)
 
 include .make/base.mk
 include .make/oci.mk

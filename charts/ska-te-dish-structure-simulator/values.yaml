@@ -5,10 +5,13 @@
 
 replicaCount: 1
 
+env:
+  type: production
+
 image:
-  repository: consol/rocky-xfce-vnc
+  repository: artefact.skao.int
+  name: ska-te-dish-structure-simulator
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
   tag: ""
   devMode: false
 

@@ -73,3 +73,24 @@ Always
 Never
 {{- end }}
 {{- end }}
+{{/*
+set the ds-sim serviceType
+*/}}
+{{- define "ds-sim.serviceType" }}
+{{- if eq .Values.env.type "production" -}}
+LoadBalancer
+{{- else if eq .Values.env.type "ci" -}}
+LoadBalancer
+{{- else -}}
+NodePort
+{{- end }}
+{{- end }}
+{{/*
+set the ds-sim image
+*/}}
+{{- define "ds-sim.image" -}}
+{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
+{{- end }}
+{{/*
+
+*/}}
