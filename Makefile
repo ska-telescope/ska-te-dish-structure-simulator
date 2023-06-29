@@ -1,5 +1,7 @@
 # set env vars for local dev environment
 ENV_TYPE ?= ci # the environment in which the k8s installation takes place
+KUBE_NAMESPACE ?= ds-sim
+
 # we use this image tag to know which image to use in the chart
 IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
 ifeq ($(CI_JOB_ID),)
