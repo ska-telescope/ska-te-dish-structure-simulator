@@ -59,9 +59,9 @@ kind: Service
 metadata:
   labels:
     {{- include "ds-sim.labels" . | nindent 4 }}
-  name: {{include "ds-sim.fullname" .}}
+  name: {{ .Values.serviceSettings.name }}
 spec:
-  externalName: {{include "ds-sim.fullname" .}}
+  externalName: {{ .Values.serviceSettings.name }}
   ports:
   - name: http-port-tcp
     protocol: TCP
