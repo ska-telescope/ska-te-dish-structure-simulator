@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: "{{ include "ds-sim.fullname" . }}-test-connection"
   labels:
-    {{- include "ds-sim.labels" . | nindent 4 }}
+    {{- include "ds-sim.test-labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
 spec:

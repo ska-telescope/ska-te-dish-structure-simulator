@@ -41,6 +41,18 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+{{/*
+Test-labels
+*/}}
+{{- define "ds-sim.test-labels" -}}
+helm.sh/chart: {{ include "ds-sim.chart" . }}
+app.kubernetes.io/name: {{ include "ds-sim.name" . }}-test-connection
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
 
 {{/*
 Selector labels
