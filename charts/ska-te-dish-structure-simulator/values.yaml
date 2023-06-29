@@ -93,3 +93,6 @@ affinity: {}
 hostName: ds-sim
 
 imagePullPolicy: IfNotPresent
+
+serviceSettings:
+  name: ds-sim
