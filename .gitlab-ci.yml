@@ -50,7 +50,11 @@ deploy:
     ATOMIC: "False"
   script:
     - make credentials
+    - make k8s-template-chart
     - make k8s-install-chart
+  artifacts:
+    paths:
+      - build
   environment:
     name: test/ska-$CONFIG-$CI_COMMIT_REF_SLUG
     kubernetes:
