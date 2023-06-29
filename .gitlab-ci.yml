@@ -3,6 +3,10 @@ image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
+.tags_default:
+  tags:
+    - k8srunner
+
 stages:
   - lint
   - build
@@ -37,6 +41,8 @@ include:
 
 deploy:
   stage: deploy
+  extends:
+    - .tags_default
   variables:
     HELM_RELEASE: "test-$CONFIG-$CI_JOB_ID"
     KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-$CONFIG"
