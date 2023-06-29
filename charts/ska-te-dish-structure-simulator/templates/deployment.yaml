@@ -67,22 +67,30 @@ spec:
     protocol: TCP
     port: 80
     targetPort: 80
+    {{- if eq .Values.env.type "dev"  }}
     nodePort: 32001
+    {{- end }}
   - name: vnc-port-tcp
     protocol: TCP
     port: 5000
     targetPort: 5000
+    {{- if eq .Values.env.type "dev"  }}
     nodePort: 32002
+    {{- end }}
   - name: http-file-server-port
     protocol: TCP
     port: 8080
     targetPort: 8080
+    {{- if eq .Values.env.type "dev"  }}
     nodePort: 32003
+    {{- end }}
   - name: opc-sim-tcp
     protocol: TCP
     port: 53530
     targetPort: 53530
+    {{- if eq .Values.env.type "dev"  }}
     nodePort: 32004
+    {{- end }}
   selector:
     {{- include "ds-sim.selectorLabels" . | nindent 4 }}
   type: {{ include "ds-sim.serviceType" . }}

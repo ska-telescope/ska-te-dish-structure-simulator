@@ -77,12 +77,10 @@ Never
 set the ds-sim serviceType
 */}}
 {{- define "ds-sim.serviceType" }}
-{{- if eq .Values.env.type "production" -}}
-LoadBalancer
-{{- else if eq .Values.env.type "ci" -}}
-LoadBalancer
-{{- else -}}
+{{- if eq .Values.env.type "dev" -}}
 NodePort
+{{- else -}}
+LoadBalancer
 {{- end }}
 {{- end }}
 {{/*
