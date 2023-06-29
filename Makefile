@@ -4,8 +4,11 @@ KUBE_NAMESPACE ?= ds-sim
 ATOMIC ?= True## Whether helm chart installation must be atomic
 # we use this image tag to know which image to use in the chart
 IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
+OCI_REGISTRY = $(CI_REGISTRY)
+PROJECT_NAMESPACE = /$(CI_PROJECT_NAMESPACE)
 ifeq ($(CI_JOB_ID),)
-  CAR_OCI_REGISTRY_HOST = docker.io
+  OCI_REGISTRY = docker.io
+  PROJECT_NAMESPACE =
   VERSION = latest
   HELM_RELEASE = dev
   ENV_TYPE = ci
@@ -25,7 +28,7 @@ temp:
 
 K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
   --set env.type=${ENV_TYPE} \
-  --set image.repository=$(CAR_OCI_REGISTRY_HOST) \
+  --set image.repository=$(OCI_REGISTRY)$(PROJECT_NAMESPACE) \
   --set image.name=$(OCI_IMAGE) \
   --set image.tag=$(IMAGE_TAG)
 
