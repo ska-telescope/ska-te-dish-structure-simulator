@@ -91,3 +91,5 @@ tolerations: []
 affinity: {}
 
 hostName: ds-sim
+
+imagePullPolicy: IfNotPresent

@@ -31,7 +31,7 @@ spec:
               name: http
         - name: {{ .Chart.Name }}
           image: {{ include "ds-sim.image" . }}
-          imagePullPolicy: Never
+          imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
           volumeMounts:
             - name: shared-data
               mountPath: /root/shared
