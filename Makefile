@@ -5,7 +5,7 @@ ATOMIC ?= True## Whether helm chart installation must be atomic
 # we use this image tag to know which image to use in the chart
 IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
 OCI_REGISTRY = $(CI_REGISTRY)
-PROJECT_NAMESPACE = /$(CI_PROJECT_NAMESPACE)
+PROJECT_NAMESPACE = /$(CI_PROJECT_NAMESPACE)/$(CI_PROJECT_NAME)
 ifeq ($(CI_JOB_ID),)
   OCI_REGISTRY = docker.io
   PROJECT_NAMESPACE =
