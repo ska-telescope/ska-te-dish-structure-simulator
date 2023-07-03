@@ -17,15 +17,22 @@
 		"source=${localEnv:HOME}${localEnv:USERPROFILE},target=/home/vscode/host,type=bind,consistency=cached",
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube,target=/home/vscode/.kube,type=bind,consistency=cached",
 	],
+	/*"runArgs": [
+		"--dns",
+		"192.168.99.162"
+	],*/
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "pip install yamllint",
+	"postCreateCommand": "",
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": ".venv/bin/python"
+			},
 			"extensions": [
 				"ms-kubernetes-tools.vscode-kubernetes-tools",
 				"donjayamanne.githistory",

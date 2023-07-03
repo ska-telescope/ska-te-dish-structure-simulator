@@ -2,16 +2,18 @@
 ENV_TYPE ?= ci # the environment in which the k8s installation takes place
 KUBE_NAMESPACE ?= ds-sim
 ATOMIC ?= True## Whether helm chart installation must be atomic
+OCI_IMAGE_BUILD_CONTEXT = $(shell echo $(PWD))
 # we use this image tag to know which image to use in the chart
+KUBERNETES_HOST ?= cluster.local
 IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
 OCI_REGISTRY = $(CI_REGISTRY)
 PROJECT_NAMESPACE = /$(CI_PROJECT_NAMESPACE)/$(CI_PROJECT_NAME)
 ifeq ($(CI_JOB_ID),)
-  OCI_REGISTRY = docker.io
+  OCI_REGISTRY = 
   PROJECT_NAMESPACE =
   VERSION = latest
   HELM_RELEASE = dev
-  ENV_TYPE = ci
+  ENV_TYPE = dev
   IMAGE_TAG = $(VERSION)
   #HELM_BUILD_PUSH_SKIP=yes
 endif
@@ -20,11 +22,6 @@ ATOMIC_ARGS =
 ifeq ($(ATOMIC),True)
   ATOMIC_ARGS = --atomic --timeout 300s 
 endif
-
-temp:
-	@echo ATOMIC_ARGS = $(ATOMIC_ARGS)
-	@echo CI_JOB_ID = .$(CI_JOB_ID).
-	@echo ATOMIC = .$(ATOMIC).
 
 K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
   --set env.type=${ENV_TYPE} \

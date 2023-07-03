@@ -21,14 +21,19 @@ spec:
     spec:
       hostname: {{ .Values.hostName }}
       containers:
+      {{-  if .Values.features.filebrowser }}
         - name: file-browser
           image: hurlenko/filebrowser
+          env:
+            - name: FB_BASEURL
+              value: /{{ .Release.Namespace }}/fileserver/
           volumeMounts:
             - name: shared-data
               mountPath: /data
           ports:
             - containerPort: 8080
               name: http
+      {{- end }}
         - name: {{ .Chart.Name }}
           image: {{ include "ds-sim.image" . }}
           imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
@@ -63,30 +68,32 @@ metadata:
 spec:
   externalName: {{ .Values.serviceSettings.name }}
   ports:
-  - name: http-port-tcp
+  - name: http-vnc
     protocol: TCP
     port: 80
     targetPort: 80
     {{- if eq .Values.env.type "dev"  }}
     nodePort: 32001
     {{- end }}
-  - name: vnc-port-tcp
+  - name: vnc
     protocol: TCP
-    port: 5000
+    port: {{ .Values.serviceSettings.vncPort }}
     targetPort: 5000
     {{- if eq .Values.env.type "dev"  }}
     nodePort: 32002
     {{- end }}
-  - name: http-file-server-port
+    {{- if .Values.features.filebrowser }}
+  - name: file-server
     protocol: TCP
     port: 8080
     targetPort: 8080
     {{- if eq .Values.env.type "dev"  }}
     nodePort: 32003
     {{- end }}
-  - name: opc-sim-tcp
+    {{- end }}
+  - name: opcua
     protocol: TCP
-    port: 53530
+    port: {{ .Values.serviceSettings.opcuaPort }}
     targetPort: 53530
     {{- if eq .Values.env.type "dev"  }}
     nodePort: 32004
@@ -94,3 +101,33 @@ spec:
   selector:
     {{- include "ds-sim.selectorLabels" . | nindent 4 }}
   type: {{ include "ds-sim.serviceType" . }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{include "ds-sim.fullname" .}}
+  labels:
+    {{- include "ds-sim.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /{{ .Release.Namespace }}/novnc/(.*)
+        backend:
+          service:
+            name: {{ .Values.serviceSettings.name }}
+            port:
+              name: http-vnc
+        pathType: ImplementationSpecific
+      {{- if .Values.features.filebrowser }}
+      - path: /{{ .Release.Namespace }}/fileserver/(.*)
+        backend:
+          service:
+            name: {{ .Values.serviceSettings.name }}
+            port:
+              name: file-server
+      {{- end }}
+        pathType: ImplementationSpecific

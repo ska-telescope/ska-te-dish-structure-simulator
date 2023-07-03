@@ -96,3 +96,8 @@ imagePullPolicy: IfNotPresent
 
 serviceSettings:
   name: ds-sim
+  vncPort: 5000
+  opcuaPort: 5350
+
+features:
+  filebrowser:

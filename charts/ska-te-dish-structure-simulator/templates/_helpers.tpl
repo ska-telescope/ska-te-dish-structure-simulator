@@ -99,7 +99,11 @@ LoadBalancer
 set the ds-sim image
 */}}
 {{- define "ds-sim.image" -}}
+{{- if .Values.repository  }}
 '{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}'
+{{- else -}}
+'{{ .Values.image.name }}:{{ .Values.image.tag }}'
+{{- end }}
 {{- end }}
 {{/*
 
