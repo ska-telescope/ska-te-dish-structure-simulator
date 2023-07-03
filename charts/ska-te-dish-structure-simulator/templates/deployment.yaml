@@ -70,7 +70,7 @@ spec:
   ports:
   - name: http-vnc
     protocol: TCP
-    port: 80
+    port: 8090
     targetPort: 80
     {{- if eq .Values.env.type "dev"  }}
     nodePort: 32001
@@ -109,9 +109,9 @@ metadata:
   labels:
     {{- include "ds-sim.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
