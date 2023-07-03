@@ -1,0 +1,133 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{include "ds-sim.fullname" .}}
+  labels:
+    {{- include "ds-sim.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "ds-sim.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ds-sim.selectorLabels" . | nindent 8 }}
+    spec:
+      hostname: {{ .Values.hostName }}
+      containers:
+      {{-  if .Values.features.filebrowser }}
+        - name: file-browser
+          image: hurlenko/filebrowser
+          env:
+            - name: FB_BASEURL
+              value: /{{ .Release.Namespace }}/fileserver/
+          volumeMounts:
+            - name: shared-data
+              mountPath: /data
+          ports:
+            - containerPort: 8080
+              name: http
+      {{- end }}
+        - name: {{ .Chart.Name }}
+          image: {{ include "ds-sim.image" . }}
+          imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
+          volumeMounts:
+            - name: shared-data
+              mountPath: /root/shared
+          livenessProbe:
+            tcpSocket:
+              port: 5900
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+          ### checks if http-vnc connection is working
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: shared-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "ds-sim.labels" . | nindent 4 }}
+  name: {{ .Values.serviceSettings.name }}
+spec:
+  externalName: {{ .Values.serviceSettings.name }}
+  ports:
+  - name: http-vnc
+    protocol: TCP
+    port: 8090
+    targetPort: 80
+    {{- if eq .Values.env.type "dev"  }}
+    nodePort: 32001
+    {{- end }}
+  - name: vnc
+    protocol: TCP
+    port: {{ .Values.serviceSettings.vncPort }}
+    targetPort: 5000
+    {{- if eq .Values.env.type "dev"  }}
+    nodePort: 32002
+    {{- end }}
+    {{- if .Values.features.filebrowser }}
+  - name: file-server
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+    {{- if eq .Values.env.type "dev"  }}
+    nodePort: 32003
+    {{- end }}
+    {{- end }}
+  - name: opcua
+    protocol: TCP
+    port: {{ .Values.serviceSettings.opcuaPort }}
+    targetPort: 53530
+    {{- if eq .Values.env.type "dev"  }}
+    nodePort: 32004
+    {{- end }}
+  selector:
+    {{- include "ds-sim.selectorLabels" . | nindent 4 }}
+  type: {{ include "ds-sim.serviceType" . }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{include "ds-sim.fullname" .}}
+  labels:
+    {{- include "ds-sim.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /{{ .Release.Namespace }}/novnc/(.*)
+        backend:
+          service:
+            name: {{ .Values.serviceSettings.name }}
+            port:
+              name: http-vnc
+        pathType: ImplementationSpecific
+      {{- if .Values.features.filebrowser }}
+      - path: /{{ .Release.Namespace }}/fileserver/(.*)
+        backend:
+          service:
+            name: {{ .Values.serviceSettings.name }}
+            port:
+              name: file-server
+      {{- end }}
+        pathType: ImplementationSpecific

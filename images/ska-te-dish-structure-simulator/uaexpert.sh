@@ -1,0 +1,1 @@
+/root/uaexpert.AppImage --appimage-extract-and-run

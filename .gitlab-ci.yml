@@ -1,0 +1,64 @@
+image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+.tags_default:
+  tags:
+    - k8srunner
+
+stages:
+  - lint
+  - build
+  - deploy
+  - test
+  - scan
+  - publish
+  - pages
+
+# Include CI templates
+include:
+  # make oci-lint
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/oci-image-lint.gitlab-ci.yml"
+
+  # make oci-build-all CAR_OCI_REGISTRY_HOST=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/oci-image-build.gitlab-ci.yml"
+
+  # Helm Charts
+  # Linting stage
+  # make helm-lint
+  # make helm-build (create a publishable helm chart artefact)
+  # make helm-publish
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/helm-chart.gitlab-ci.yml"
+
+  # k8s steps
+  # k8s-install-chart
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/k8s-test-runner.gitlab-ci.yml"
+
+deploy:
+  stage: deploy
+  extends:
+    - .tags_default
+  variables:
+    HELM_RELEASE: "test-$CONFIG-$CI_JOB_ID"
+    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
+    ATOMIC: "False"
+  script:
+    - make credentials
+    - make k8s-template-chart
+    - make k8s-install-chart
+  artifacts:
+    paths:
+      - build
+  environment:
+    name: test/ska-$CONFIG-$CI_COMMIT_REF_SLUG
+    kubernetes:
+      # This repetition is needed for gitlab to parse the namespace correctly
+      namespace: $KUBE_NAMESPACE
+  when: manual
+  allow_failure: true # need to keep this to unlock the pipeline
