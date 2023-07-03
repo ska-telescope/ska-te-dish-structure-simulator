@@ -12,7 +12,7 @@ image:
   repository: artefact.skao.int
   name: ska-te-dish-structure-simulator
   pullPolicy: IfNotPresent
-  tag: ""
+  tag: "0.1.0"
   devMode: false
 
 imagePullSecrets: []
@@ -100,4 +100,4 @@ serviceSettings:
   opcuaPort: 5350
 
 features:
-  filebrowser:
+  filebrowser: enabled
