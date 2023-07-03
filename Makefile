@@ -13,7 +13,7 @@ ifeq ($(CI_JOB_ID),)
   PROJECT_NAMESPACE =
   VERSION = latest
   HELM_RELEASE = dev
-  ENV_TYPE = dev
+  ENV_TYPE =  dev
   IMAGE_TAG = $(VERSION)
   #HELM_BUILD_PUSH_SKIP=yes
 endif
@@ -43,7 +43,7 @@ k8s-wait:
 	@echo "ignoring k8s-wait as we rely on the helm install"
 
 k8s-do-test-runner:
-	helm test $(HELM_RELEASE)
+	helm test $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE)
 
 
 k8s-do-template-chart:
