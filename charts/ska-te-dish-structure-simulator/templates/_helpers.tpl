@@ -80,7 +80,7 @@ in dev environment image pull policy will always be never
 {{- if eq .Values.env.type "production" -}}
 {{ .Values.imagePullPolicy }}
 {{- else if eq .Values.env.type "ci" -}}
-Always
+Never
 {{- else -}}
 Never
 {{- end }}
@@ -99,7 +99,7 @@ LoadBalancer
 set the ds-sim image
 */}}
 {{- define "ds-sim.image" -}}
-{{- if .Values.repository  }}
+{{- if .Values.image.repository  }}
 '{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}'
 {{- else -}}
 '{{ .Values.image.name }}:{{ .Values.image.tag }}'
