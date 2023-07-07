@@ -15,7 +15,7 @@ image:
   name: ska-te-dish-structure-simulator
   init: ska-te-dish-structure-files
   pullPolicy: IfNotPresent
-  tag: "0.1.5"
+  tag: "0.1.6"
   devMode: false
   cleanHome: false
 
