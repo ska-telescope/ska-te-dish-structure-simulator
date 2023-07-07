@@ -1,1 +1,1 @@
-/root/uaexpert.AppImage --appimage-extract-and-run
+/usr/local/bin/uaexpert.AppImage --appimage-extract-and-run

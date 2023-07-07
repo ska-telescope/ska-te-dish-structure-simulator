@@ -20,6 +20,22 @@ spec:
         {{- include "ds-sim.selectorLabels" . | nindent 8 }}
     spec:
       hostname: {{ .Values.hostName }}
+      {{- if ne .Values.env.type "ci" }}
+      initContainers:
+        - name: init-home-folder
+          image: {{ include "ds-sim.initImage" . }}
+          imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
+          {{- if .Values.image.cleanHome }}
+          env:
+           - name: CLEAN
+             value: "True"
+          {{- end }}
+          command: ["copy"]
+          args: ["/root", "/destination"]
+          volumeMounts:
+            - name: persistent-data
+              mountPath: /destination/
+      {{- end }}
       containers:
       {{-  if .Values.features.filebrowser }}
         - name: file-browser
@@ -37,9 +53,22 @@ spec:
         - name: {{ .Chart.Name }}
           image: {{ include "ds-sim.image" . }}
           imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
+          env:
+            - name: RESOLUTION
+              value: {{ .Values.resolution }}
+            - name: KUBE_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: KUBE_HOST
+              value: {{ .Values.kubehost }}
+            - name: KUBE_DNS
+              value: {{ .Values.kubedns }}
           volumeMounts:
             - name: shared-data
               mountPath: /root/shared
+            {{- if ne .Values.env.type "ci" }}
+            - name: persistent-data
+              mountPath: /root/
+            {{- end }}
           livenessProbe:
             tcpSocket:
               port: 5900
@@ -58,6 +87,13 @@ spec:
       volumes:
         - name: shared-data
           emptyDir: {}
+        - name: root-data
+          emptyDir: {}
+        {{- if ne .Values.env.type "ci" }}
+        - name: persistent-data
+          persistentVolumeClaim:
+            claimName: {{include "ds-sim.fullname" .}}-persistent-data
+        {{- end }}
 ---
 apiVersion: v1
 kind: Service

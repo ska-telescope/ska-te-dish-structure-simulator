@@ -11,13 +11,19 @@ env:
 image:
   repository: artefact.skao.int
   name: ska-te-dish-structure-simulator
+  init: ska-te-dish-structure-files
   pullPolicy: IfNotPresent
   tag: "0.1.5"
   devMode: false
+  cleanHome: false
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+resolution: 1280×720
+kubehost: cluster.local
+kubedns: 192.168.99.162
 
 serviceAccount:
   # Specifies whether a service account should be created

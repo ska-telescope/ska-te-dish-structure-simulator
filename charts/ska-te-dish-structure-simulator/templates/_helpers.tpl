@@ -106,5 +106,23 @@ set the ds-sim image
 {{- end }}
 {{- end }}
 {{/*
-
+set the ds-sim init image
 */}}
+{{- define "ds-sim.initImage" -}}
+{{- if .Values.image.repository  -}}
+'{{ .Values.image.repository }}/{{ .Values.image.init }}:{{ .Values.image.tag }}'
+{{- else -}}
+'{{ .Values.image.init }}:{{ .Values.image.tag }}'
+{{- end }}
+{{- end }}
+{{/*
+Storage class
+*/}}
+*/}}
+{{- define "ds-sim.storageClass" }}
+{{- if eq .Values.env.type "dev" -}}
+hostpath
+{{- else -}}
+nfss1
+{{- end }}
+{{- end }}

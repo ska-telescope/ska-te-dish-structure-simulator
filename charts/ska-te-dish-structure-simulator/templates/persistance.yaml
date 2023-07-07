@@ -1,0 +1,18 @@
+{{- if ne .Values.env.type "ci" }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-provisioner: rook-ceph.cephfs.csi.ceph.com
+    volume.kubernetes.io/storage-provisioner: rook-ceph.cephfs.csi.ceph.com
+  labels:
+    {{- include "ds-sim.labels" . | nindent 4 }}
+  name: {{include "ds-sim.fullname" .}}-persistent-data
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: {{ include "ds-sim.storageClass" . }}
+{{- end }}
