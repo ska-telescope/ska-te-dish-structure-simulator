@@ -1,3 +1,4 @@
+{{- if .Values.persist }}
 {{- if ne .Values.env.type "ci" }}
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -15,4 +16,5 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: {{ include "ds-sim.storageClass" . }}
+{{- end }}
 {{- end }}

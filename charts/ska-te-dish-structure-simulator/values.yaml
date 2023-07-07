@@ -5,6 +5,8 @@
 
 replicaCount: 1
 
+imageoverride: fredblgr/ubuntu-novnc:20.04
+
 env:
   type: production
 
@@ -21,7 +23,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-resolution: 1280×720
+resolution:
 kubehost: cluster.local
 kubedns: 192.168.99.162
 

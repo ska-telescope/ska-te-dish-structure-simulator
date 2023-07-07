@@ -20,6 +20,7 @@ spec:
         {{- include "ds-sim.selectorLabels" . | nindent 8 }}
     spec:
       hostname: {{ .Values.hostName }}
+      {{- if .Values.persist }}
       {{- if ne .Values.env.type "ci" }}
       initContainers:
         - name: init-home-folder
@@ -35,6 +36,7 @@ spec:
           volumeMounts:
             - name: persistent-data
               mountPath: /destination/
+      {{- end }}
       {{- end }}
       containers:
       {{-  if .Values.features.filebrowser }}
@@ -54,8 +56,10 @@ spec:
           image: {{ include "ds-sim.image" . }}
           imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
           env:
+            {{- if .Values.resolution }}
             - name: RESOLUTION
               value: {{ .Values.resolution }}
+            {{ end }}
             - name: KUBE_NAMESPACE
               value: {{ .Release.Namespace }}
             - name: KUBE_HOST
@@ -65,15 +69,12 @@ spec:
           volumeMounts:
             - name: shared-data
               mountPath: /root/shared
+            {{- if .Values.persist }}
             {{- if ne .Values.env.type "ci" }}
             - name: persistent-data
               mountPath: /root/
             {{- end }}
-          livenessProbe:
-            tcpSocket:
-              port: 5900
-            initialDelaySeconds: 1
-            timeoutSeconds: 1
+            {{- end }}
           ### checks if http-vnc connection is working
           readinessProbe:
             httpGet:
@@ -89,10 +90,12 @@ spec:
           emptyDir: {}
         - name: root-data
           emptyDir: {}
+        {{- if .Values.persist }}
         {{- if ne .Values.env.type "ci" }}
         - name: persistent-data
           persistentVolumeClaim:
             claimName: {{include "ds-sim.fullname" .}}-persistent-data
+        {{- end }}
         {{- end }}
 ---
 apiVersion: v1
