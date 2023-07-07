@@ -5,7 +5,7 @@
 
 replicaCount: 1
 
-imageoverride: fredblgr/ubuntu-novnc:20.04
+imageoverride:
 
 env:
   type: production
@@ -109,3 +109,5 @@ serviceSettings:
 
 features:
   filebrowser: enabled
+
+persisted: True
