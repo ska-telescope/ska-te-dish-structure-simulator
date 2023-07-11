@@ -77,7 +77,9 @@ set the image pull policy based on the current environment
 in dev environment image pull policy will always be never
 */}}
 {{- define "ds-sim.pullPolicy" }}
-{{- if eq .Values.env.type "production" -}}
+{{- if .Values.imageoverride -}}
+IfNotPresent
+{{- else if eq .Values.env.type "production" -}}
 {{ .Values.imagePullPolicy }}
 {{- else if eq .Values.env.type "ci" -}}
 Always
@@ -99,12 +101,32 @@ LoadBalancer
 set the ds-sim image
 */}}
 {{- define "ds-sim.image" -}}
-{{- if .Values.image.repository  -}}
+{{- if .Values.imageoverride -}}
+{{ .Values.imageoverride }}
+{{- else if .Values.image.repository  -}}
 '{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}'
 {{- else -}}
 '{{ .Values.image.name }}:{{ .Values.image.tag }}'
 {{- end }}
 {{- end }}
 {{/*
-
+set the ds-sim init image
 */}}
+{{- define "ds-sim.initImage" -}}
+{{- if .Values.image.repository  -}}
+'{{ .Values.image.repository }}/{{ .Values.image.init }}:{{ .Values.image.tag }}'
+{{- else -}}
+'{{ .Values.image.init }}:{{ .Values.image.tag }}'
+{{- end }}
+{{- end }}
+{{/*
+Storage class
+*/}}
+*/}}
+{{- define "ds-sim.storageClass" }}
+{{- if eq .Values.env.type "dev" -}}
+hostpath
+{{- else -}}
+nfss1
+{{- end }}
+{{- end }}

@@ -17,10 +17,12 @@
 		"source=${localEnv:HOME}${localEnv:USERPROFILE},target=/home/vscode/host,type=bind,consistency=cached",
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube,target=/home/vscode/.kube,type=bind,consistency=cached",
 	],
-	/*"runArgs": [
-		"--dns",
-		"192.168.99.162"
-	],*/
+	"runArgs": [
+		//	"--dns",
+		//	"192.168.99.162",
+		"--add-host",
+		"ds-sim:10.164.10.3"
+	],
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

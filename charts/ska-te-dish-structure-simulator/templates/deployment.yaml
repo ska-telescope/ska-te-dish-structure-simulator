@@ -20,6 +20,24 @@ spec:
         {{- include "ds-sim.selectorLabels" . | nindent 8 }}
     spec:
       hostname: {{ .Values.hostName }}
+      {{- if .Values.persist }}
+      {{- if ne .Values.env.type "ci" }}
+      initContainers:
+        - name: init-home-folder
+          image: {{ include "ds-sim.initImage" . }}
+          imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
+          {{- if .Values.image.cleanHome }}
+          env:
+           - name: CLEAN
+             value: "True"
+          {{- end }}
+          command: ["copy"]
+          args: ["/root", "/destination"]
+          volumeMounts:
+            - name: persistent-data
+              mountPath: /destination/
+      {{- end }}
+      {{- end }}
       containers:
       {{-  if .Values.features.filebrowser }}
         - name: file-browser
@@ -37,14 +55,26 @@ spec:
         - name: {{ .Chart.Name }}
           image: {{ include "ds-sim.image" . }}
           imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
+          env:
+            {{- if .Values.resolution }}
+            - name: RESOLUTION
+              value: {{ .Values.resolution }}
+            {{ end }}
+            - name: KUBE_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: KUBE_HOST
+              value: {{ .Values.kubehost }}
+            - name: KUBE_DNS
+              value: {{ .Values.kubedns }}
           volumeMounts:
             - name: shared-data
               mountPath: /root/shared
-          livenessProbe:
-            tcpSocket:
-              port: 5900
-            initialDelaySeconds: 1
-            timeoutSeconds: 1
+            {{- if .Values.persist }}
+            {{- if ne .Values.env.type "ci" }}
+            - name: persistent-data
+              mountPath: /root/
+            {{- end }}
+            {{- end }}
           ### checks if http-vnc connection is working
           readinessProbe:
             httpGet:
@@ -58,6 +88,15 @@ spec:
       volumes:
         - name: shared-data
           emptyDir: {}
+        - name: root-data
+          emptyDir: {}
+        {{- if .Values.persist }}
+        {{- if ne .Values.env.type "ci" }}
+        - name: persistent-data
+          persistentVolumeClaim:
+            claimName: {{include "ds-sim.fullname" .}}-persistent-data
+        {{- end }}
+        {{- end }}
 ---
 apiVersion: v1
 kind: Service
