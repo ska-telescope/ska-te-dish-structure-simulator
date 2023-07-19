@@ -1,0 +1,8 @@
+global:
+  facility: mid-itf
+
+ds-sim:
+  maxuploadfilesize: "131072m"
+  instances:
+    - dish-id: SKA001
+      novnc-enabled: true

@@ -13,6 +13,7 @@ PROJECT_NAMESPACE = /$(CI_PROJECT_NAMESPACE)/$(CI_PROJECT_NAME)
 CLEAN ?= True
 KUBEDNS ?= 192.168.99.162
 KUBEHOST ?= cluster.local
+MAXUPLOADFILESIZE ?= "131072m"
 ifeq ($(CI_JOB_ID),)
   OCI_REGISTRY = 
   PROJECT_NAMESPACE =
@@ -38,7 +39,8 @@ K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
   --set image.tag=$(IMAGE_TAG) \
   --set image.cleanHome=$(CLEAN) \
   --set image.kubehost=$(KUBEHOST) \
-  --set image.kubedns=$(KUBEDNS)
+  --set image.kubedns=$(KUBEDNS) \
+  --set maxuploadfilesize=$(MAXUPLOADFILESIZE)
 
 include .make/base.mk
 include .make/oci.mk
