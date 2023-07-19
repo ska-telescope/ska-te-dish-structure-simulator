@@ -1,3 +1,4 @@
+PROJECT?=ska-te-dish-structure-simulator
 # set env vars for local dev environment
 ENV_TYPE ?= ci # the environment in which the k8s installation takes place
 KUBE_NAMESPACE ?= ds-sim
@@ -37,7 +38,7 @@ K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
   --set image.tag=$(IMAGE_TAG) \
   --set image.cleanHome=$(CLEAN) \
   --set image.kubehost=$(KUBEHOST) \
-  --set imahe.kubedns=$(KUBEDNS)
+  --set image.kubedns=$(KUBEDNS)
 
 include .make/base.mk
 include .make/oci.mk
