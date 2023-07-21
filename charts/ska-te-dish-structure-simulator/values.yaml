@@ -110,6 +110,6 @@ serviceSettings:
 features:
   filebrowser: enabled
 
-maxuploadfilesize: "1024m"
+maxuploadfilesize: "50m"
 
 persisted: True
