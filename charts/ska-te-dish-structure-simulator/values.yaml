@@ -24,7 +24,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 # available fixed screen sizes: 1920x1080, 1680x1050 
-resolution: 1920x1080
+resolution:
 kubehost: cluster.local
 kubedns: 192.168.99.162
 
