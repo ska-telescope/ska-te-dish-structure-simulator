@@ -4,7 +4,11 @@ Expand the name of the chart.
 {{- define "ds-sim.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
-
+{{/* define the dis-sim image tag
+*/}}
+{{- define "ds-sim.tag" -}}
+{{- default .Chart.Version .Values.image.tag }}
+{{- end }}
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -101,22 +105,24 @@ LoadBalancer
 set the ds-sim image
 */}}
 {{- define "ds-sim.image" -}}
+{{- $tag := (include "ds-sim.tag" .) -}}
 {{- if .Values.imageoverride -}}
 {{ .Values.imageoverride }}
 {{- else if .Values.image.repository  -}}
-'{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}'
+'{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ $tag }}'
 {{- else -}}
-'{{ .Values.image.name }}:{{ .Values.image.tag }}'
+'{{ .Values.image.name }}:{{ $tag }}'
 {{- end }}
 {{- end }}
 {{/*
 set the ds-sim init image
 */}}
 {{- define "ds-sim.initImage" -}}
+{{- $tag := (include "ds-sim.tag" .) -}}
 {{- if .Values.image.repository  -}}
-'{{ .Values.image.repository }}/{{ .Values.image.init }}:{{ .Values.image.tag }}'
+'{{ .Values.image.repository }}/{{ .Values.image.init }}:{{ $tag }}'
 {{- else -}}
-'{{ .Values.image.init }}:{{ .Values.image.tag }}'
+'{{ .Values.image.init }}:{{ $tag }}'
 {{- end }}
 {{- end }}
 {{/*
