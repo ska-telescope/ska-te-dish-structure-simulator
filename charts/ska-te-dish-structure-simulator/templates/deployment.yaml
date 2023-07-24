@@ -135,7 +135,14 @@ spec:
     port: {{ .Values.serviceSettings.opcuaPort }}
     targetPort: 53530
     {{- if eq .Values.env.type "dev"  }}
-    nodePort: 32004
+    nodePort: 32535
+    {{- end }}
+  - name: cetc
+    protocol: TCP
+    port: {{ .Values.serviceSettings.cetcPort }}
+    targetPort: 4840
+    {{- if eq .Values.env.type "dev"  }}
+    nodePort: 32484
     {{- end }}
   selector:
     {{- include "ds-sim.selectorLabels" . | nindent 4 }}
