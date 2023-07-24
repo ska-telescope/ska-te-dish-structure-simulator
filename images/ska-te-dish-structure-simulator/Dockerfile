@@ -1,4 +1,4 @@
-FROM fredblgr/ubuntu-novnc:20.04
+FROM fredblgr/ubuntu-novnc:22.04
 
 USER root
 
@@ -22,4 +22,10 @@ COPY images/ska-te-dish-structure-simulator/getip.sh /usr/local/bin/getip
 RUN chmod +x /usr/local/bin/install /usr/local/bin/client /usr/local/bin/getip
 
 
-# ENTRYPOINT [ "/bin/bash" ]
+ADD images/ska-te-dish-structure-simulator/buildDemo.tar.gz /sim/
+
+ENV LD_LIBRARY_PATH=/sim/buildDemo/
+
+RUN chmod +x /sim/buildDemo/Simulator && ln -s /sim/buildDemo/Simulator /usr/local/sbin/simulator
+
+# ENTRYPOINT [ "bash" ]
