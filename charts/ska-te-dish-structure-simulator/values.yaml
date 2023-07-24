@@ -23,7 +23,8 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-resolution:
+# available fixed screen sizes: 1920x1080, 1680x1050 
+resolution: 1920x1080
 kubehost: cluster.local
 kubedns: 192.168.99.162
 
@@ -106,6 +107,7 @@ serviceSettings:
   name: ds-sim
   vncPort: 5000
   opcuaPort: 53530
+  cetcPort: 4840
 
 features:
   filebrowser: enabled
