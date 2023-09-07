@@ -1,6 +1,6 @@
 ---
 {{ $dsSimWebPort := 8090 }}
-{{ $dsSimWebPath := / }}
+{{ $dsSimWebPath := "/" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
