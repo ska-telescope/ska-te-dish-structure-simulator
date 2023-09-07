@@ -4,6 +4,7 @@ KUBE_NAMESPACE ?= ds-sim
 ATOMIC ?= True## Whether helm chart installation must be atomic
 OCI_IMAGE_BUILD_CONTEXT = $(shell echo $(PWD))
 OCI_INIT_IMAGE ?= ska-te-dish-structure-files
+OCI_APP_IMAGE ?= ska-te-ds-sim
 # we use this image tag to know which image to use in the chart
 KUBERNETES_HOST ?= cluster.local
 IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
@@ -33,11 +34,12 @@ K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
   --set env.type=${ENV_TYPE} \
   --set image.repository=$(OCI_REGISTRY)$(PROJECT_NAMESPACE) \
   --set image.name=$(OCI_IMAGE) \
+  --set image.appName=$(OCI_APP_IMAGE) \
   --set image.init=$(OCI_INIT_IMAGE) \
   --set image.tag=$(IMAGE_TAG) \
   --set image.cleanHome=$(CLEAN) \
   --set image.kubehost=$(KUBEHOST) \
-  --set imahe.kubedns=$(KUBEDNS)
+  --set image.kubedns=$(KUBEDNS)
 
 include .make/base.mk
 include .make/oci.mk

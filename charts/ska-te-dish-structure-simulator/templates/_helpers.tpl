@@ -57,7 +57,6 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
-
 {{/*
 Selector labels
 */}}
@@ -115,6 +114,19 @@ set the ds-sim image
 {{- end }}
 {{- end }}
 {{/*
+set the ds-sim-app image
+*/}}
+{{- define "ds-sim-web.image" -}}
+{{- $tag := (include "ds-sim.tag" .) -}}
+{{- if .Values.imageoverride -}}
+{{ .Values.imageoverride }}
+{{- else if .Values.image.repository  -}}
+'{{ .Values.image.repository }}/{{ .Values.image.webImageName }}:{{ $tag }}'
+{{- else -}}
+'{{ .Values.image.appName }}:{{ $tag }}'
+{{- end }}
+{{- end }}
+{{/*
 set the ds-sim init image
 */}}
 {{- define "ds-sim.initImage" -}}
@@ -135,4 +147,9 @@ hostpath
 {{- else -}}
 nfss1
 {{- end }}
+{{- end }}
+{{/*
+ds-sim-web paths
+*/}}
+{{- define "ds-sim-web.path" }}
 {{- end }}
