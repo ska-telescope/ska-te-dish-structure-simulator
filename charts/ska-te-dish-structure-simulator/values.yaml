@@ -13,6 +13,7 @@ env:
 image:
   repository: artefact.skao.int
   name: ska-te-dish-structure-simulator
+  webImageName: ska-te-ds-web-sim
   init: ska-te-dish-structure-files
   pullPolicy: IfNotPresent
   tag:
@@ -23,7 +24,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-# available fixed screen sizes: 1920x1080, 1680x1050 
+# available fixed screen sizes: 1920x1080, 1680x1050
 resolution:
 kubehost: cluster.local
 kubedns: 192.168.99.162
