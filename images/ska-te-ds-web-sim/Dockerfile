@@ -1,8 +1,13 @@
-FROM  openjdk:8
+FROM openjdk:8
+ARG TARBALL_LOCATION
 
-ADD images/ska-te-ds-web-sim/simulator.tar ./
-RUN chmod 777  /home/simulator
+ADD ${TARBALL_LOCATION}/simulator.tar /
+RUN chmod 777 /home/simulator
 ENV MYPATH /home/simulator
-WORKDIR $MYPATH
+WORKDIR ${MYPATH}
 
-CMD  java -jar  -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 ./jar/simulator.jar
+EXPOSE 4840
+EXPOSE 5005
+EXPOSE 8090
+
+CMD java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 ./jar/simulator.jar
