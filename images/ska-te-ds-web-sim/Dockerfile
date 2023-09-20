@@ -1,7 +1,7 @@
 FROM openjdk:8
-ARG TARBALL_LOCATION
+ARG CETC_TARBALL_LOCATION=.
 
-ADD ${TARBALL_LOCATION}/simulator.tar /
+ADD ${CETC_TARBALL_LOCATION}/simulator.tar /
 RUN chmod 777 /home/simulator
 ENV MYPATH /home/simulator
 WORKDIR ${MYPATH}
