@@ -1,7 +1,6 @@
 FROM openjdk:8
-ARG CETC_TARBALL_LOCATION=.
 
-ADD ${CETC_TARBALL_LOCATION}/simulator.tar /
+ADD images/ska-te-ds-web-sim/simulator.tar /
 RUN chmod 777 /home/simulator
 ENV MYPATH /home/simulator
 WORKDIR ${MYPATH}
