@@ -2,14 +2,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{include "ds-sim.fullname" .}}
+  name: {{include "ds-sim.fullname" .}}-web
   labels:
     {{- include "ds-sim.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-        app.kubernetes.io/name: {{ include "ds-sim.name" . }}
+        app.kubernetes.io/name: {{ include "ds-sim.name" . }}-web
         app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
@@ -18,11 +18,11 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "ds-sim.name" . }}
+        app.kubernetes.io/name: {{ include "ds-sim.name" . }}-web
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-web
           image: {{ include "ds-sim.image" . }}
           imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
           volumeMounts:
@@ -41,14 +41,14 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "ds-sim.fullname" . }}-config
+            name: {{ include "ds-sim.fullname" . }}-web-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     {{- include "ds-sim.labels" . | nindent 4 }}
-  name: {{ .Values.serviceSettings.name }}
+  name: {{ .Values.serviceSettings.name }}-web
 spec:
   externalName: {{ .Values.serviceSettings.name }}
   ports:
@@ -74,14 +74,14 @@ spec:
     nodePort: {{ .Values.serviceSettings.opcuaNodePort }}
     {{- end }}
   selector:
-    app.kubernetes.io/name: {{ include "ds-sim.name" . }}
+    app.kubernetes.io/name: {{ include "ds-sim.name" . }}-web
     app.kubernetes.io/instance: {{ .Release.Name }}
   type: {{ include "ds-sim.serviceType" . }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{include "ds-sim.fullname" .}}-ingress
+  name: {{include "ds-sim.fullname" .}}-web
   labels:
     {{- include "ds-sim.labels" . | nindent 4 }}
   annotations:
@@ -94,7 +94,7 @@ spec:
       - path: /{{ .Release.Namespace }}/webds/(.*)
         backend:
           service:
-            name: {{ .Values.serviceSettings.name }}
+            name: {{ .Values.serviceSettings.name }}-web
             port:
               name: server
         pathType: ImplementationSpecific
@@ -102,7 +102,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "ds-sim.fullname" . }}-config
+  name: {{ include "ds-sim.fullname" . }}-web-config
 data:
   application.yml: |-
     server:
