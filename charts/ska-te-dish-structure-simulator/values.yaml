@@ -12,9 +12,7 @@ env:
 
 image:
   repository: artefact.skao.int
-  name: ska-te-dish-structure-simulator
-  webImageName: ska-te-ds-web-sim
-  init: ska-te-dish-structure-files
+  name: ska-te-ds-web-sim
   pullPolicy: IfNotPresent
   tag:
   devMode: false
@@ -106,9 +104,13 @@ imagePullPolicy: IfNotPresent
 
 serviceSettings:
   name: ds-sim
-  vncPort: 5000
-  opcuaPort: 53530
-  cetcPort: 4840
+  httpPort: 8090
+  httpNodePort: 32004
+  discoverPort: 4840
+  discoverNodePort: 32005
+  opcuaPort: 5005
+  opcuaNodePort: 32006
+  httpPath: "/"
 
 features:
   filebrowser: enabled

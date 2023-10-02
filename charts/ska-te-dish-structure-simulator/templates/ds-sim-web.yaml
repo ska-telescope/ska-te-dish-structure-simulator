@@ -1,17 +1,15 @@
 ---
-{{ $dsSimWebPort := 8090 }}
-{{ $dsSimWebPath := "/" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{include "ds-sim.fullname" .}}-web
+  name: {{include "ds-sim.fullname" .}}
   labels:
     {{- include "ds-sim.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-        app.kubernetes.io/name: {{ include "ds-sim.name" . }}-web
+        app.kubernetes.io/name: {{ include "ds-sim.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
@@ -20,12 +18,12 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "ds-sim.name" . }}-web
+        app.kubernetes.io/name: {{ include "ds-sim.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}-web
-          image: {{ include "ds-sim-web.image" . }}
+        - name: {{ .Chart.Name }}
+          image: {{ include "ds-sim.image" . }}
           imagePullPolicy: {{ include "ds-sim.pullPolicy" . }}
           volumeMounts:
            - name: config
@@ -34,7 +32,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: {{ $dsSimWebPort }}
+              port: {{ .Values.serviceSettings.httpPort }}
               scheme: HTTP
             initialDelaySeconds: 1
             timeoutSeconds: 1
@@ -43,47 +41,47 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{include "ds-sim.fullname" .}}-web-config
+            name: {{ include "ds-sim.fullname" . }}-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     {{- include "ds-sim.labels" . | nindent 4 }}
-  name: {{ .Values.serviceSettings.name }}-web
+  name: {{ .Values.serviceSettings.name }}
 spec:
   externalName: {{ .Values.serviceSettings.name }}
   ports:
   - name: server
     protocol: TCP
-    port: {{ $dsSimWebPort }}
-    targetPort: {{ $dsSimWebPort }}
+    port: {{ .Values.serviceSettings.httpPort }}
+    targetPort: {{ .Values.serviceSettings.httpPort }}
     {{- if eq .Values.env.type "dev"  }}
-    nodePort: 32004
+    nodePort: {{ .Values.serviceSettings.httpNodePort }}
     {{- end }}
   - name: discover
     protocol: TCP
-    port: 4840
-    targetPort: 4840
+    port: {{ .Values.serviceSettings.discoverPort }}
+    targetPort: {{ .Values.serviceSettings.discoverPort }}
     {{- if eq .Values.env.type "dev"  }}
-    nodePort: 32005
+    nodePort: {{ .Values.serviceSettings.discoverNodePort }}
     {{- end }}
-  - name: opcau
+  - name: opcua
     protocol: TCP
-    port: 5005
-    targetPort: 5005
+    port: {{ .Values.serviceSettings.opcuaPort }}
+    targetPort: {{ .Values.serviceSettings.opcuaPort }}
     {{- if eq .Values.env.type "dev"  }}
-    nodePort: 32006
+    nodePort: {{ .Values.serviceSettings.opcuaNodePort }}
     {{- end }}
   selector:
-    app.kubernetes.io/name: {{ include "ds-sim.name" . }}-web
+    app.kubernetes.io/name: {{ include "ds-sim.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
   type: {{ include "ds-sim.serviceType" . }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{include "ds-sim.fullname" .}}-web
+  name: {{include "ds-sim.fullname" .}}-ingress
   labels:
     {{- include "ds-sim.labels" . | nindent 4 }}
   annotations:
@@ -96,7 +94,7 @@ spec:
       - path: /{{ .Release.Namespace }}/webds/(.*)
         backend:
           service:
-            name: {{ .Values.serviceSettings.name }}-web
+            name: {{ .Values.serviceSettings.name }}
             port:
               name: server
         pathType: ImplementationSpecific
@@ -104,17 +102,17 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{include "ds-sim.fullname" .}}-web-config
+  name: {{ include "ds-sim.fullname" . }}-config
 data:
   application.yml: |-
     server:
-      port: {{ $dsSimWebPort }}
+      port: {{ .Values.serviceSettings.httpPort }}
     logging:
       config: ./config/logback-spring.xml
     opcUa:
       server:
         tcp:
-          port: 4840
+          port: {{ .Values.serviceSettings.discoverPort }}
       clientIP:
         EGUI: 192.168.1.1
         LMC: 192.168.1.2
