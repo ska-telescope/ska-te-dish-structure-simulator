@@ -2,15 +2,11 @@
 ENV_TYPE ?= ci # the environment in which the k8s installation takes place
 KUBE_NAMESPACE ?= ds-sim
 ATOMIC ?= True## Whether helm chart installation must be atomic
-OCI_IMAGE_BUILD_CONTEXT = $(shell echo $(PWD))
+OCI_IMAGE_BUILD_CONTEXT = $(PWD)
 # we use this image tag to know which image to use in the chart
-KUBERNETES_HOST ?= cluster.local
 IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
 OCI_REGISTRY = $(CI_REGISTRY)
 PROJECT_NAMESPACE = /$(CI_PROJECT_NAMESPACE)/$(CI_PROJECT_NAME)
-CLEAN ?= True
-KUBEDNS ?= 192.168.99.162
-KUBEHOST ?= cluster.local
 ifeq ($(CI_JOB_ID),)
   OCI_REGISTRY = 
   PROJECT_NAMESPACE =
@@ -18,8 +14,6 @@ ifeq ($(CI_JOB_ID),)
   HELM_RELEASE = dev
   ENV_TYPE = dev
   IMAGE_TAG = $(VERSION)
-  CLEAN = False
-  KUBEDNS = 127.0.0.1
   #HELM_BUILD_PUSH_SKIP=yes
 endif
 
@@ -31,10 +25,7 @@ endif
 K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
   --set env.type=${ENV_TYPE} \
   --set image.repository=$(OCI_REGISTRY)$(PROJECT_NAMESPACE) \
-  --set image.tag=$(IMAGE_TAG) \
-  --set image.cleanHome=$(CLEAN) \
-  --set image.kubehost=$(KUBEHOST) \
-  --set image.kubedns=$(KUBEDNS)
+  --set image.tag=$(IMAGE_TAG)
 
 include .make/base.mk
 include .make/oci.mk

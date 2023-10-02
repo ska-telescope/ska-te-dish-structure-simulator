@@ -22,11 +22,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-# available fixed screen sizes: 1920x1080, 1680x1050
-resolution:
-kubehost: cluster.local
-kubedns: 192.168.99.162
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -50,10 +45,6 @@ securityContext:
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
 
 ingress:
   enabled: false
@@ -111,8 +102,3 @@ serviceSettings:
   opcuaPort: 5005
   opcuaNodePort: 32006
   httpPath: "/"
-
-features:
-  filebrowser: enabled
-
-persisted: True
