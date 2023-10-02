@@ -45,10 +45,6 @@ include .make/k8s.mk
 helm-do-lint:
 	helm lint charts/ska-te-dish-structure-simulator
 
-# ignoring k8s-wait as we rely on the helm install
-k8s-wait:
-	@echo "ignoring k8s-wait as we rely on the helm install"
-
 k8s-do-test-runner:
 	helm test $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE)
 
