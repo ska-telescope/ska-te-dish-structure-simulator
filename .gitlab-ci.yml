@@ -45,12 +45,14 @@ info-dev-environment:
   script:
     - make deployment-info
     - make credentials
+    - make template-chart
 
 .mid-tf:
   image: $SKA_K8S_TOOLS_BUILD_DEPLOY
   stage: mid-itf
   tags:
     - ska-k8srunner-za-itf
+  when: manual
   variables:
     KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME"
     CLUSTER_DOMAIN: miditf.internal.skao.int
@@ -60,7 +62,6 @@ info-dev-environment:
 
 deploy-mid-itf:
   extends: .mid-tf
-  when: manual
   environment:
     name: ci-mid-itf-$CI_PROJECT_NAME
     on_stop: stop-mid-itf
