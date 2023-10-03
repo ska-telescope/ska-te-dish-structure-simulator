@@ -2,6 +2,8 @@
 
 ## unreleased
 
+* [AT-1487] - Remove unused images and helm configuration.
+
 ## 0.2.0
 
 * [AT-744] Add Dish structure sim web.
