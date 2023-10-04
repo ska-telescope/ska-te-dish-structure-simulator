@@ -2,17 +2,11 @@
 ENV_TYPE ?= ci # the environment in which the k8s installation takes place
 KUBE_NAMESPACE ?= ds-sim
 ATOMIC ?= True## Whether helm chart installation must be atomic
-OCI_IMAGE_BUILD_CONTEXT = $(shell echo $(PWD))
-OCI_INIT_IMAGE ?= ska-te-dish-structure-files
-OCI_APP_IMAGE ?= ska-te-ds-sim
+OCI_IMAGE_BUILD_CONTEXT = $(PWD)
 # we use this image tag to know which image to use in the chart
-KUBERNETES_HOST ?= cluster.local
 IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
 OCI_REGISTRY = $(CI_REGISTRY)
 PROJECT_NAMESPACE = /$(CI_PROJECT_NAMESPACE)/$(CI_PROJECT_NAME)
-CLEAN ?= True
-KUBEDNS ?= 192.168.99.162
-KUBEHOST ?= cluster.local
 ifeq ($(CI_JOB_ID),)
   OCI_REGISTRY = 
   PROJECT_NAMESPACE =
@@ -20,8 +14,6 @@ ifeq ($(CI_JOB_ID),)
   HELM_RELEASE = dev
   ENV_TYPE = dev
   IMAGE_TAG = $(VERSION)
-  CLEAN = False
-  KUBEDNS = 127.0.0.1
   #HELM_BUILD_PUSH_SKIP=yes
 endif
 
@@ -33,13 +25,7 @@ endif
 K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
   --set env.type=${ENV_TYPE} \
   --set image.repository=$(OCI_REGISTRY)$(PROJECT_NAMESPACE) \
-  --set image.name=$(OCI_IMAGE) \
-  --set image.appName=$(OCI_APP_IMAGE) \
-  --set image.init=$(OCI_INIT_IMAGE) \
-  --set image.tag=$(IMAGE_TAG) \
-  --set image.cleanHome=$(CLEAN) \
-  --set image.kubehost=$(KUBEHOST) \
-  --set image.kubedns=$(KUBEDNS)
+  --set image.tag=$(IMAGE_TAG)
 
 include .make/base.mk
 include .make/oci.mk
@@ -49,10 +35,6 @@ include .make/k8s.mk
 # we ovcerride default helm lint as yamllint isnt helm lint
 helm-do-lint:
 	helm lint charts/ska-te-dish-structure-simulator
-
-# ignoring k8s-wait as we rely on the helm install
-k8s-wait:
-	@echo "ignoring k8s-wait as we rely on the helm install"
 
 k8s-do-test-runner:
 	helm test $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE)
@@ -67,16 +49,13 @@ k8s-do-template-chart:
 	--debug \
 	 $(K8S_UMBRELLA_CHART_PATH) --namespace $(KUBE_NAMESPACE) | tee -a build/manifests/manifests.yaml
 
+deployment-info:
+	@echo "Pods for $(KUBE_NAMESPACE)"
+	@kubectl get pods -n $(KUBE_NAMESPACE) -owide
+	@echo "Services"
+	@kubectl get svc -n $(KUBE_NAMESPACE) -owide
+.PHONY: deployment-info
+
 credentials:  ## PIPELINE USE ONLY - allocate credentials for deployment namespaces
 	make k8s-namespace
 	curl -s https://gitlab.com/ska-telescope/templates-repository/-/raw/master/scripts/namespace_auth.sh | bash -s $(SERVICE_ACCOUNT) $(KUBE_NAMESPACE) || true
-
-
-
-pre-fligh-check: helm-lint
-
-
-	
-
-
-

@@ -101,7 +101,7 @@ LoadBalancer
 {{- end }}
 {{- end }}
 {{/*
-set the ds-sim image
+set the ds-sim-app image
 */}}
 {{- define "ds-sim.image" -}}
 {{- $tag := (include "ds-sim.tag" .) -}}
@@ -114,42 +114,7 @@ set the ds-sim image
 {{- end }}
 {{- end }}
 {{/*
-set the ds-sim-app image
+ds-sim paths
 */}}
-{{- define "ds-sim-web.image" -}}
-{{- $tag := (include "ds-sim.tag" .) -}}
-{{- if .Values.imageoverride -}}
-{{ .Values.imageoverride }}
-{{- else if .Values.image.repository  -}}
-'{{ .Values.image.repository }}/{{ .Values.image.webImageName }}:{{ $tag }}'
-{{- else -}}
-'{{ .Values.image.appName }}:{{ $tag }}'
-{{- end }}
-{{- end }}
-{{/*
-set the ds-sim init image
-*/}}
-{{- define "ds-sim.initImage" -}}
-{{- $tag := (include "ds-sim.tag" .) -}}
-{{- if .Values.image.repository  -}}
-'{{ .Values.image.repository }}/{{ .Values.image.init }}:{{ $tag }}'
-{{- else -}}
-'{{ .Values.image.init }}:{{ $tag }}'
-{{- end }}
-{{- end }}
-{{/*
-Storage class
-*/}}
-*/}}
-{{- define "ds-sim.storageClass" }}
-{{- if eq .Values.env.type "dev" -}}
-hostpath
-{{- else -}}
-nfss1
-{{- end }}
-{{- end }}
-{{/*
-ds-sim-web paths
-*/}}
-{{- define "ds-sim-web.path" }}
+{{- define "ds-sim.path" }}
 {{- end }}

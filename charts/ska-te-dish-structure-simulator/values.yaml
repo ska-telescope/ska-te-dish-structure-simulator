@@ -12,9 +12,7 @@ env:
 
 image:
   repository: artefact.skao.int
-  name: ska-te-dish-structure-simulator
-  webImageName: ska-te-ds-web-sim
-  init: ska-te-dish-structure-files
+  name: ska-te-ds-web-sim
   pullPolicy: IfNotPresent
   tag:
   devMode: false
@@ -23,11 +21,6 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
-# available fixed screen sizes: 1920x1080, 1680x1050
-resolution:
-kubehost: cluster.local
-kubedns: 192.168.99.162
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -52,10 +45,6 @@ securityContext:
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
 
 ingress:
   enabled: false
@@ -106,11 +95,10 @@ imagePullPolicy: IfNotPresent
 
 serviceSettings:
   name: ds-sim
-  vncPort: 5000
-  opcuaPort: 53530
-  cetcPort: 4840
-
-features:
-  filebrowser: enabled
-
-persisted: True
+  httpPort: 8090
+  httpNodePort: 32004
+  discoverPort: 4840
+  discoverNodePort: 32005
+  opcuaPort: 5005
+  opcuaNodePort: 32006
+  httpPath: "/"

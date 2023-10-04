@@ -1,6 +1,0 @@
-
-#SIMSERVER License Information
-Hostname=ds-sim
-Licensee=SKAO
-Name=Keith Browne
-Email=keith.browne@skao.int

@@ -1,17 +1,12 @@
-image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
-
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-
-.tags_default:
-  tags:
-    - k8srunner
 
 stages:
   - lint
   - build
   - deploy
   - test
+  - mid-itf
   - scan
   - publish
   - pages
@@ -39,26 +34,67 @@ include:
   - project: "ska-telescope/templates-repository"
     file: "gitlab-ci/includes/k8s-test-runner.gitlab-ci.yml"
 
-deploy:
-  stage: deploy
-  extends:
-    - .tags_default
+  # deploy steps
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/deploy.dev.gitlab-ci.yml"
+
+info-dev-environment:
   variables:
-    HELM_RELEASE: "test-$CONFIG-$CI_JOB_ID"
-    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
-    ATOMIC: "False"
+    KUBE_NAMESPACE: "ci-dev-$CI_PROJECT_NAME"
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME"
   script:
+    - make deployment-info
     - make credentials
-    - make k8s-template-chart
-    - make k8s-install-chart
-  artifacts:
-    paths:
-      - build
-  environment:
-    name: test/ska-$CONFIG-$CI_COMMIT_REF_SLUG
-    kubernetes:
-      # This repetition is needed for gitlab to parse the namespace correctly
-      namespace: $KUBE_NAMESPACE
+    - make template-chart
+
+.mid-tf:
+  image: $SKA_K8S_TOOLS_BUILD_DEPLOY
+  stage: mid-itf
+  tags:
+    - ska-k8srunner-za-itf
   when: manual
-  allow_failure: true # need to keep this to unlock the pipeline
+  variables:
+    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME"
+    CLUSTER_DOMAIN: miditf.internal.skao.int
+    INGRESS_HOST: k8s.miditf.internal.skao.int
+    SERVICE_ACCOUNT: ci-svc-$CI_PROJECT_NAME
+    NEXUS_CACHE: NEXUS_CACHE
+
+deploy-mid-itf:
+  extends: .mid-tf
+  environment:
+    name: ci-mid-itf-$CI_PROJECT_NAME
+    on_stop: stop-mid-itf
+  script:
+    - make k8s-install-chart
+    - make k8s-wait
+
+info-mid-itf:
+  extends: .mid-tf
+  environment:
+    name: ci-mid-itf-$CI_PROJECT_NAME
+  script:
+    - make deployment-info
+
+stop-mid-itf:
+  extends: .mid-tf
+  needs:
+    - deploy-mid-itf
+  environment:
+    name: ci-mid-itf-$CI_PROJECT_NAME
+    action: stop
+  script:
+    - make k8s-uninstall-chart
+    - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
+    - make k8s-delete-namespace
+
+redeploy-mid-itf:
+  extends: .mid-tf
+  environment:
+    name: ci-mid-itf-$CI_PROJECT_NAME
+  script:
+    - make k8s-uninstall-chart
+    - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
+    - make k8s-delete-namespace
+    - make k8s-install-chart
+
