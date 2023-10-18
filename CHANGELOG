@@ -2,6 +2,10 @@
 
 ## unreleased
 
+## 0.4.0
+
+* [AT-1443] - v1.1 Dish Structure Sim delivery
+
 ## 0.3.0
 
 * [AT-1487] - Remove unused images and helm configuration.
