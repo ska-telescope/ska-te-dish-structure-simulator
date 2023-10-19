@@ -1,8 +1,8 @@
 FROM openjdk:8
 
-ADD images/ska-te-ds-web-sim/simulator.tar /
-RUN chmod 777 /home/simulator
-ENV MYPATH /home/simulator
+ADD images/ska-te-ds-web-sim/simulator.tar ./
+RUN chmod 777 simulator
+ENV MYPATH simulator
 WORKDIR ${MYPATH}
 
 EXPOSE 4840
