@@ -37,8 +37,13 @@ helm-do-lint:
 	helm lint charts/ska-te-dish-structure-simulator
 
 k8s-do-test-runner:
-	helm test $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE)
+	$(helm_test_command)
 
+helm_test_command = /bin/bash -o pipefail -c "\
+	mkdir -p build; \
+	helm test $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE); \
+	echo \$$? > build/status; \
+	echo \"helm test: test command exit is: \$$(cat build/status)\";"
 
 k8s-do-template-chart:
 	mkdir -p build/manifests
