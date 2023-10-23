@@ -2,6 +2,10 @@
 
 ## unreleased
 
+* [AT-1678] - Add release template
+* [AT-1678] - Correct helm chart name.
+* [AT-1678] - Fix k8s-test-runner job.
+
 ## 0.4.0
 
 * [AT-1443] - v1.1 Dish Structure Sim delivery

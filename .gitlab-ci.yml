@@ -38,6 +38,10 @@ include:
   - project: "ska-telescope/templates-repository"
     file: "gitlab-ci/includes/deploy.dev.gitlab-ci.yml"
 
+  # release steps
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/release.gitlab-ci.yml"
+
 info-dev-environment:
   variables:
     KUBE_NAMESPACE: "ci-dev-$CI_PROJECT_NAME"
@@ -98,3 +102,5 @@ redeploy-mid-itf:
     - make k8s-delete-namespace
     - make k8s-install-chart
 
+k8s-test-runner:
+  allow_failure: false
