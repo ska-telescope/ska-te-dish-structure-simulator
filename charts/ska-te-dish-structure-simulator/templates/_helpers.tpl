@@ -61,6 +61,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "ds-sim.selectorLabels" -}}
+app: {{ include "ds-sim.name" . }}
 app.kubernetes.io/name: {{ include "ds-sim.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
@@ -100,6 +101,7 @@ NodePort
 LoadBalancer
 {{- end }}
 {{- end }}
+
 {{/*
 set the ds-sim-app image
 */}}

@@ -14,12 +14,11 @@ ifeq ($(CI_JOB_ID),)
   HELM_RELEASE = dev
   ENV_TYPE = dev
   IMAGE_TAG = $(VERSION)
-  #HELM_BUILD_PUSH_SKIP=yes
 endif
 
 ATOMIC_ARGS =
 ifeq ($(ATOMIC),True)
-  ATOMIC_ARGS = --atomic --timeout 300s 
+  ATOMIC_ARGS = --atomic --timeout 300s
 endif
 
 K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
@@ -41,7 +40,7 @@ k8s-do-test-runner:
 
 helm_test_command = /bin/bash -o pipefail -c "\
 	mkdir -p build; \
-	helm test $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE); \
+	helm test --debug $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE); \
 	echo \$$? > build/status; \
 	echo \"helm test: test command exit is: \$$(cat build/status)\";"
 
