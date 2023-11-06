@@ -1,7 +1,9 @@
 # Version History
 
-## unreleased
+## 0.4.1
 
+* [REL-1041] - Fixed version number of CETC54 application
+* [AT-1743] - Corrected image packaged from CETC54
 * [AT-1678] - Add release template
 * [AT-1678] - Correct helm chart name.
 * [AT-1678] - Fix k8s-test-runner job.

@@ -16,12 +16,14 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.4.0
+version: 0.4.1
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-# This was 0.4.0 in the last release, but should have been 1.1.0 to match the version of
-# the Dish Structure Simulator which was delivered to us.
-appVersion: 1.1.0
+# This was 0.4.0 in a previous release, but should have been 1.1.0 to match the version of
+# the Dish Structure Simulator which was delivered to us. The current 1.1.1 version is now used
+# to indicate the patching of the application package, and henceforth the App version will indicate
+# the version number used by CETC54.
+appVersion: 1.1.1
