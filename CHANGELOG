@@ -1,5 +1,9 @@
 # Version History
 
+## Unreleased
+
+* [AT-1788] - Move dish structure simulator tests from ska-mid-itf to ska-te-dish-structure-simulator.
+
 ## 0.5.0
 
 * [REL-1043] - Bumped to new release

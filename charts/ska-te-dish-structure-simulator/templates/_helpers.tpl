@@ -91,16 +91,6 @@ Always
 Never
 {{- end }}
 {{- end }}
-{{/*
-set the ds-sim serviceType
-*/}}
-{{- define "ds-sim.serviceType" }}
-{{- if eq .Values.env.type "dev" -}}
-NodePort
-{{- else -}}
-LoadBalancer
-{{- end }}
-{{- end }}
 
 {{/*
 set the ds-sim-app image

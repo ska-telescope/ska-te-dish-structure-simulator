@@ -26,16 +26,22 @@ K8S_CHART_PARAMS = $(ATOMIC_ARGS) \
   --set image.repository=$(OCI_REGISTRY)$(PROJECT_NAMESPACE) \
   --set image.tag=$(IMAGE_TAG)
 
+PYTHON_RUNNER := poetry run
+PYTHON_LINT_TARGET := tests
+PYTHON_LINE_LENGTH = 99
+
 include .make/base.mk
 include .make/oci.mk
 include .make/helm.mk
 include .make/k8s.mk
+include .make/python.mk
+-include PrivateRules.mak
 
 # we ovcerride default helm lint as yamllint isnt helm lint
 helm-do-lint:
 	helm lint charts/ska-te-dish-structure-simulator
 
-k8s-do-test-runner:
+helm-test:
 	$(helm_test_command)
 
 helm_test_command = /bin/bash -o pipefail -c "\
@@ -43,15 +49,6 @@ helm_test_command = /bin/bash -o pipefail -c "\
 	helm test --debug $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE); \
 	echo \$$? > build/status; \
 	echo \"helm test: test command exit is: \$$(cat build/status)\";"
-
-k8s-do-template-chart:
-	mkdir -p build/manifests
-	@echo "template-chart: install $(K8S_UMBRELLA_CHART_PATH) release: $(HELM_RELEASE) in Namespace: $(KUBE_NAMESPACE) with params: $(K8S_CHART_PARAMS)"
-	kubectl create ns $(KUBE_NAMESPACE) --dry-run=client -o yaml | tee build/manifests/manifests.yaml; \
-	helm template $(HELM_RELEASE) \
-	$(K8S_CHART_PARAMS) \
-	--debug \
-	 $(K8S_UMBRELLA_CHART_PATH) --namespace $(KUBE_NAMESPACE) | tee -a build/manifests/manifests.yaml
 
 deployment-info:
 	@echo "Pods for $(KUBE_NAMESPACE)"
