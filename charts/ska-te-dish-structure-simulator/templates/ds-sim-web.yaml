@@ -74,7 +74,7 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "ds-sim.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-  type: {{ include "ds-sim.serviceType" . }}
+  type: LoadBalancer
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

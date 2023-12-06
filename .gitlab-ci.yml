@@ -49,6 +49,11 @@ include:
   - project: "ska-telescope/templates-repository"
     file: "gitlab-ci/includes/release.gitlab-ci.yml"
 
+  # lint only: we don't have our own code in here
+  # & tests require a deployment in k8s.
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/python-lint.gitlab-ci.yml"
+
 info-dev-environment:
   variables:
     KUBE_NAMESPACE: "ci-dev-$CI_PROJECT_NAME"
@@ -110,6 +115,16 @@ redeploy-mid-itf:
     - make k8s-install-chart
 
 k8s-test-runner:
-  allow_failure: false
-  tags: # Temporary change because AWS deployments are failing: change back when STFC is online
+  tags:
     - ska-k8srunner-za-itf
+  variables:
+    DS_SIM_NAMESPACE: $KUBE_NAMESPACE
+    DS_SIM_SERVICE: ds-sim
+    DS_SIM_SERVER_CERT: $CI_PROJECT_DIR/.secure_files/SimpleServer_2048.der
+  allow_failure: false
+  before_script:
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+    - 'make help | grep k8s-test'
+    - make k8s-install-chart
+    - make k8s-wait

@@ -2,3 +2,10 @@
 build/**/*
 KUBECONFIG
 **/*/__pycache__/**/*
+PrivateRules.mak
+ignored
+.coverage
+images/ska-te-ds-web-sim/simulator
+*.der
+*.pem
+pytest-logs.txt
