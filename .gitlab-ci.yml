@@ -115,7 +115,6 @@ redeploy-mid-itf:
 
 k8s-test-runner:
   tags:
-    - ska-k8srunner-za-itf
     - k8srunner
   variables:
     DS_SIM_NAMESPACE: $KUBE_NAMESPACE
