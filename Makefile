@@ -37,8 +37,7 @@ include .make/k8s.mk
 include .make/python.mk
 -include PrivateRules.mak
 
-# we ovcerride default helm lint as yamllint isnt helm lint
-helm-do-lint:
+helm-post-lint:
 	helm lint charts/ska-te-dish-structure-simulator
 
 helm-test:
