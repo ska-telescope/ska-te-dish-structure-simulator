@@ -131,7 +131,7 @@ k8s-test-runner:
   before_script:
     - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
-    - bash resources/gitlab_section.sh env_vars "Print environment variables" env
+    - bash .make/resources/gitlab_section.sh env_vars "Print environment variables" env
     - "make help | grep k8s-test"
     - make k8s-install-chart
     - make k8s-wait
