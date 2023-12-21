@@ -119,6 +119,7 @@ def fixture_ds_sim_svc() -> Generator:
     :yield: The kubernetes service
     :rtype: Generator
     """
+    logging.debug(f"env: {os.environ}")
     svc_name = os.getenv("DS_SIM_SERVICE", "ds-sim")
     namespace = os.getenv("DS_SIM_NAMESPACE", "ds-sim")
     cluster_domain = os.getenv("CLUSTER_DOMAIN", "miditf.internal.skao.int")
