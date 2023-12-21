@@ -48,6 +48,10 @@ include:
   - project: "ska-telescope/templates-repository"
     file: "gitlab-ci/includes/release.gitlab-ci.yml"
 
+  # Changelog steps
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/changelog.gitlab-ci.yml"
+
   # lint only: we don't have our own code in here
   # & tests require a deployment in k8s.
   - project: "ska-telescope/templates-repository"
@@ -115,11 +119,11 @@ redeploy-mid-itf:
 
 .runner_tag:
   tags:
-    # - ska-k8srunner-za-itf
-    - k8srunner
+    - ska-k8srunner-za-itf
+    # - k8srunner
   variables:
-    # CLUSTER_DOMAIN: miditf.internal.skao.int
-    CLUSTER_DOMAIN: cluster.local
+    CLUSTER_DOMAIN: miditf.internal.skao.int
+    # CLUSTER_DOMAIN: cluster.local
 
 k8s-test-runner:
   extends: .runner_tag
