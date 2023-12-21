@@ -44,9 +44,10 @@ def connection_details(ds_sim_svc: DSSimService):
     assert ds_sim_svc.discover_port() != 0
     assert ds_sim_svc.http_port() != 0
     logging.debug(
-        "ds-sim connection details: ip=%s,discover_port=%s",
-        ds_sim_svc.ip_address,
-        ds_sim_svc.discover_port,
+        "ds-sim connection details: ip=%s,discover_port=%s,http_port=%s",
+        ds_sim_svc.ip_address(),
+        ds_sim_svc.discover_port(),
+        ds_sim_svc.http_port(),
     )
 
 

@@ -1,7 +1,6 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
-
 workflow:
   rules:
     - if: $CI_MERGE_REQUEST_ID
@@ -114,9 +113,16 @@ redeploy-mid-itf:
     - make k8s-delete-namespace
     - make k8s-install-chart
 
-k8s-test-runner:
+.runner_tag:
   tags:
-    - ska-k8srunner-za-itf
+    # - ska-k8srunner-za-itf
+    - k8srunner
+  variables:
+    # CLUSTER_DOMAIN: miditf.internal.skao.int
+    CLUSTER_DOMAIN: cluster.local
+
+k8s-test-runner:
+  extends: .runner_tag
   variables:
     DS_SIM_NAMESPACE: $KUBE_NAMESPACE
     DS_SIM_SERVICE: ds-sim
@@ -125,6 +131,6 @@ k8s-test-runner:
   before_script:
     - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
-    - 'make help | grep k8s-test'
+    - "make help | grep k8s-test"
     - make k8s-install-chart
     - make k8s-wait
