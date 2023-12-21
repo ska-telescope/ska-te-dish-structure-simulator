@@ -1,6 +1,7 @@
 FROM openjdk:8
 
-ADD images/ska-te-ds-web-sim/simulator.tar ./
+RUN mkdir simulator
+ADD images/ska-te-ds-web-sim/simulator.tar ./simulator
 RUN chmod 777 simulator
 ENV MYPATH simulator
 WORKDIR ${MYPATH}
