@@ -113,9 +113,16 @@ redeploy-mid-itf:
     - make k8s-delete-namespace
     - make k8s-install-chart
 
-k8s-test-runner:
+.runner_tag:
   tags:
+    # - ska-k8srunner-za-itf
     - k8srunner
+  variables:
+    # CLUSTER_DOMAIN: miditf.internal.skao.int
+    CLUSTER_DOMAIN: cluster.local
+
+k8s-test-runner:
+  extends: .runner_tag
   variables:
     DS_SIM_NAMESPACE: $KUBE_NAMESPACE
     DS_SIM_SERVICE: ds-sim
