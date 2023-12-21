@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska-te-dish-structure-simulator-tests"
-version = "0.3.0"
+version = "0.6.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
