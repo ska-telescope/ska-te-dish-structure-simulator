@@ -59,3 +59,11 @@ deployment-info:
 credentials:  ## PIPELINE USE ONLY - allocate credentials for deployment namespaces
 	make k8s-namespace
 	curl -s https://gitlab.com/ska-telescope/templates-repository/-/raw/master/scripts/namespace_auth.sh | bash -s $(SERVICE_ACCOUNT) $(KUBE_NAMESPACE) || true
+
+build-dockerfile:
+	cd images/ska-te-ds-web-sim && source buildme.sh
+
+run-container:
+	cd images/ska-te-ds-web-sim && source runme.sh
+
+sim: build-dockerfile run-container

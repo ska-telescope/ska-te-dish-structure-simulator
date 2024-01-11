@@ -1,0 +1,21 @@
+server:
+  port: 8090
+
+logging:
+  config: ./config/logback-spring.xml
+
+opcUa:
+  server:
+    port: 4840
+    nameSpace: CETC54
+    serverName: OPCUA/SimpleServer
+    maxSessionCount: 50
+    maxSubscriptionCount: 20
+    maxMonitoredItemsPerSubscription: 10000
+    minPublishingInterval: 100
+    maxPublishingInterval: 100
+    userIdentity:
+      root: root
+      test: test
+      LMC: lmc 
+      EGUI: egui 

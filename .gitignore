@@ -5,7 +5,8 @@ KUBECONFIG
 PrivateRules.mak
 ignored
 .coverage
-images/ska-te-ds-web-sim/simulator
+images/ska-te-ds-web-sim/simulator_bu
+images/ska-te-ds-web-sim/simulator.tar_bu
 *.der
 *.pem
 pytest-logs.txt
