@@ -3,6 +3,7 @@ ENV_TYPE ?= ci # the environment in which the k8s installation takes place
 KUBE_NAMESPACE ?= ds-sim
 ATOMIC ?= True## Whether helm chart installation must be atomic
 OCI_IMAGE_BUILD_CONTEXT = $(PWD)
+OCI_IMAGE ?= ska-te-ds-web-sim
 # we use this image tag to know which image to use in the chart
 IMAGE_TAG ?= $(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
 OCI_REGISTRY = $(CI_REGISTRY)
