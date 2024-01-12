@@ -2,6 +2,7 @@ FROM openjdk:8
 
 WORKDIR /home/simulator
 COPY images/ska-te-ds-web-sim/simulator/config/* /home/simulator/config/
+COPY images/ska-te-ds-web-sim/simulator/config/* /home/simulator/
 COPY images/ska-te-ds-web-sim/simulator/jar/* /home/simulator/jar/
 ADD images/ska-te-ds-web-sim/simulator/legacy.tar ./
 RUN chmod 777  /home/simulator
