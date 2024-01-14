@@ -1,6 +1,6 @@
 # Dish Structure Simulator
 
-This repo contains images and charts for deploying dish structure simulators. There are also scripts and helper makefile targets for creating new releases of the simulators delivered by CETC, in the form of tarballs, which contain as a minimum the application file.
+This repo contains images and charts for deploying dish structure simulators.
 
 ## Images
 
@@ -9,22 +9,6 @@ The images are built to run the artefacts delivered by CETC.
 ## Charts
 
 The `ska-te-dish-structure-simulator` deploys the `ska-te-ds-sim` container with a service which exposes a webserver and a OPCUA server.
-
-## Updating releases for publishing to CAR
-New versions of the simulator.jar file (and possibly also other dependencies) are uploaded by CETC in a tarball to a Sharepoint directory managed by the Dish AIV Design Authority. There are helper scripts which function in the same fashion as those found under the `ska-te-ds-web-sim` directory, in the `latest` folder of the Sharepoint directory, for testing by CETC during their delivery.
-
-When a new version of the tarball is uploaded to the Sharepoint directory, it should be downloaded and the folder `images/ska-te-ds-web-sim/simulator` must be updated. If for instance, CETC only delivered an updated version of the `simulator.jar` file, the `simulator.tar` file must be extracted, and the `images/ska-te-ds-web-sim/simulator/jar/simulator.jar` file must be updated and the change pushed to gitlab.
-
-Test that it can be run before pushing it, by running the following:
-
-```
-make build-dockerfile
-make run-container
-```
-or, more conveniently, `make sim`.
-
-### NOTE ON DUPLICATE Dockerfile, run.sh and build.sh files
-Please note that the `Dockerfile`, `run.sh` and `build.sh` files inside `images/ska-te-ds-web-sim/simulator/` are the files shared with CETC and are the files that we shared with them at the start of development of the Simulator. They are not to be deleted and are kept as reference, in case builds fail. The SKAO OCI Makefile targets are not compatible with the `Dockerfile` that CETC uses, because they assume the project root as build context.
 
 ## Deployments
 

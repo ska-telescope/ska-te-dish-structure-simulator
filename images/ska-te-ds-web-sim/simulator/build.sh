@@ -1,1 +1,0 @@
-docker build -t simulator:1.0  .

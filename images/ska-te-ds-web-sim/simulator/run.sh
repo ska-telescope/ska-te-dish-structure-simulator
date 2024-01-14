@@ -1,1 +1,0 @@
-docker run -d  -p 8090:8090 -p 4840:4840 -p 5005:5005 -v /home/simulator/config:/home/simulator/config/ -v /home/simulator/logs:/home/simulator/logs --name simulator --restart=always simulator:1.0
