@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.7.0
+
+* [REL-1170] - Bumped to version 2.0 of application
+* [AT-1869] - New Dockerfile and folder structure - no more tarball
+
 ## 0.6.0
 
 * [REL-1149] - Bumped to new application version
